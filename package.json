@@ -1,0 +1,22 @@
+{
+  "name": "unitscoworks",
+  "version": "1.0.0",
+  "description": "Coworking Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karolychan/unitsworks.git"
+  },
+  "keywords": [
+    "fatec"
+  ],
+  "author": "Caroline Monfardini",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karolychan/unitsworks/issues"
+  },
+  "homepage": "https://github.com/karolychan/unitsworks#readme"
+}
