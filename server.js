@@ -40,6 +40,30 @@ app.get('/mongo', (req,res) => {
 //   });
 // });
 
+app.get('/users', (req, res) => {
+  User.find().then((users) => {
+    res.send({users});
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/persons', (req, res) => {
+  Person.find().then((persons) => {
+    res.send({persons});
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/companys', (req, res) => {
+  Company.find().then((companys) => {
+    res.send({companys});
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
 app.post('/users', (req, res) => {
   var user = new User({
     email: req.body.email,
