@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 const port = process.env.PORT || 3000;
 var {mongoose} = require('./db/mongoose');
-var {User} = require('./models/users');
+var {User} = require('./models/user');
 
 app.get('/', (req,res) => {
   console.log('/ GET Realizado com sucesso');
