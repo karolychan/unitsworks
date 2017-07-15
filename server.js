@@ -1,4 +1,6 @@
 var express = require('express');
+const hbs = require('hbs');
+
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
@@ -6,15 +8,65 @@ var {User} = require('./models/user');
 var {Person} = require('./models/person');
 var {Company} = require('./models/company');
 
-
 var app = express();
 const port = process.env.PORT || 3000;
-
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+hbs.registerPartials(__dirname +'/views/partials' )
+app.set('viewengine','hbs');
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req,res) => {
-  console.log('/ GET Realizado com sucesso');
-  res.send('Em breve');
+  res.render('home.hbs', {
+    pageTitle: 'About Page'
+  });
+});
+
+app.post('/', (req,res) => {
+  User.findOne({email: req.body.email, password: req.body.password}).then((user) => {
+    if(!user){
+      return res.redirect('/erro');
+    }
+    return res.redirect('/painel');
+  }, (e) => {
+    console.log('ERROR');
+  });
+});
+
+app.get('/registro', (req,res) => {
+  res.render('registro.hbs');
+});
+app.get('/registro/pessoa-juridica', (req,res) => {
+  res.render('registro-pessoa-juridica.hbs');
+});
+
+app.get('/registro/pessoa-fisica', (req,res) => {
+  res.render('registro-pessoa-fisica.hbs');
+});
+app.post('/registro/pessoa-fisica', (req,res) => {
+  var user = new User({
+    email: req.body.email,
+    registered: new Date().toLocaleDateString(),
+    password: req.body.password,
+    type: req.body.type
+  });
+  user.save().then((userDoc) => {
+        var person = new Person({
+        user: userDoc._id,
+        name: req.body.name,
+        sex: req.body.sex,
+        cep: req.body.cep,
+        street: req.body.street,
+        neighborhood: req.body.neighborhood,
+        placeNumber: req.body.placeNumber,
+        city: req.body.city,
+        state: req.body.state
+        });
+        person.save().then((personDoc) => {
+        res.send({user: userDoc, person: personDoc});
+      }, (e) => {
+       User.findByIdAndRemove(userDoc._id).then( res.redirect('/registro/pessoa-fisica') );
+      });
+  });
 });
 app.get('/mongo', (req,res) => {
   console.log('/ mongo - teste do db');
@@ -24,21 +76,6 @@ app.get('/mongo', (req,res) => {
     res.status(400).send(e);
   });
 });
-
-// User
-// app.post('/users', (req, res) => {
-//   var user = new User({
-//     email: req.body.email,
-//     registered: new Date().toLocaleDateString(),
-//     password: req.body.password,
-//     type: req.body.type
-//   });
-//   user.save().then((doc) => {
-//     res.send(doc);
-//   }, (e) => {
-//     res.status(400).send(e);
-//   });
-// });
 
 app.get('/users', (req, res) => {
   User.find().then((users) => {
