@@ -14,7 +14,11 @@ app.use(bodyParser.urlencoded());
 hbs.registerPartials(__dirname +'/views/partials' )
 app.set('viewengine','hbs');
 app.use(express.static(__dirname + '/public'));
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.get('/', (req,res) => {
   res.render('home.hbs', {
     pageTitle: 'About Page'
@@ -97,6 +101,29 @@ app.get('/companys', (req, res) => {
   Company.find().then((companys) => {
     res.send({companys});
   }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+
+app.post('/companys', (req, res) => {
+  var company = new Company({
+  user: req.body.user,
+  socialName: req.body.socialName,
+  fantasyName: req.body.fantasyName,
+  site: req.body.site,
+  cnpj: req.body.cnpj,
+  cep: req.body.cep,
+  street: req.body.street,
+  neighborhood: req.body.neighborhood,
+  placeNumber: req.body.placeNumber,
+  city: req.body.city,
+  state: req.body.state
+  });
+  company.save().then((CompanyDoc) => {
+    res.send({company: CompanyDoc});
+  }, (e) => {
+    console.log(e);
     res.status(400).send(e);
   });
 });
