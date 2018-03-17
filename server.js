@@ -128,6 +128,20 @@ app.post('/companys', (req, res) => {
   });
 });
 
+
+app.post('/login', (req, res) => {
+  
+  User.findByCredentials(req.body.email, req.body.password).then((user) => {
+    console.log(user);
+    return user.generateAuthToken().then((token) => {
+      res.header('x-auth', token).send({token: token, result:user, status:200});
+    });
+  }).catch((e) => {
+    console.log(e);
+    res.status(200).send({status: 400});
+  })
+});
+
 app.post('/users', (req, res) => {
   var user = new User({
     email: req.body.email,
